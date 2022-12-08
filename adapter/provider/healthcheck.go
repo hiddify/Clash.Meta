@@ -14,6 +14,7 @@ import (
 
 const (
 	defaultURLTestTimeout = time.Second * 5
+	defaultURLTestURL     = "https://www.gstatic.com/generate_204"
 )
 
 type HealthCheckOption struct {
@@ -62,6 +63,11 @@ func (hc *HealthCheck) touch() {
 }
 
 func (hc *HealthCheck) check() {
+
+	if len(hc.proxies) == 0 {
+		return
+	}
+
 	_, _, _ = hc.singleDo.Do(func() (struct{}, error) {
 		id := utils.NewUUIDV4().String()
 		log.Debugln("Start New Health Checking {%s}", id)
@@ -89,6 +95,9 @@ func (hc *HealthCheck) close() {
 }
 
 func NewHealthCheck(proxies []C.Proxy, url string, interval uint, lazy bool) *HealthCheck {
+	if url == "" {
+		url = defaultURLTestURL
+	}
 	return &HealthCheck{
 		proxies:   proxies,
 		url:       url,
