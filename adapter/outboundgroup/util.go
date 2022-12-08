@@ -2,7 +2,6 @@ package outboundgroup
 
 import (
 	"net"
-	"time"
 )
 
 func tcpKeepAlive(c net.Conn) {
